@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictrix - Real-Time User Behavior Analysis</title>
+    <link rel="stylesheet" href="/styles.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <ul class="nav-buttons">
+                <li><a href="#about" class="nav-btn">About</a></li>
+                <li><a href="#data-generation" class="nav-btn">Data Generation</a></li>
+                <li><a href="#dashboard" class="nav-btn">Dashboard</a></li>
+                <li><a href="#predictive-insights" class="nav-btn">Predictive Insights</a></li>
+                <li><a href="#alerts" class="nav-btn">Alerts</a></li>
+                <li><a href="https://github.com/your-repo-url" target="_blank" class="nav-btn">Source Code</a></li>
+                <li><a href="#contact" class="nav-btn">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="project-name">
+            <h1>Predictrix</h1>
+        </div>
+        <div class="hero-content">
+            <p class="intro-text">
+                Welcome to <strong>Predictrix</strong>, a real-time user behavior analysis application designed to
+                simulate and analyze user interaction data.
+            </p>
+            <div class="button-container">
+                <!-- <a href="http://127.0.0.1:5009/fetch_data" target="_blank" class="explore-btn">View & Send Data to Splunk</a> -->
+                <a href="" target="_blank" class="explore-btn">View Source Code</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Goals Section -->
+    <section id="about">
+        <h2>The Goal Of This Project Is To Showcase My Expertise In :</h2>
+        <ul class="expertise-list highlight">
+            <li>Data generation using Python</li>
+            <li>Integration with Splunk using HTTP Event Collector (HEC)</li>
+            <li>Predictive analytics using the Splunk Machine Learning Toolkit (MLTK)</li>
+            <li>Real-time alerts & Data Monitioring using Splunk Dashboard </li>
+        </ul>
+        <div class="project-includes-block highlight">
+            <p>This project includes:</p>
+            <ul class="project-details">
+                <li><strong>Data Generation & Ingestion:</strong> A Python script simulates user interaction data and sends it to Splunk using the HTTP Event Collector (HEC).</li>
+                <li><strong>Splunk Dashboards:</strong> Visualize key user metrics such as engagement, login activity, event frequency, and device usage.</li>
+                <li><strong>Predictive Insights:</strong> Using Splunk MLTK, we predict user behaviors, such as the likelihood of a purchase.</li>
+                <li><strong>Alerts:</strong> Get notified of critical events, such as abandoned carts or increased error logs.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section>
+        <h2>What Does Predictrix Do?</h2>
+        <p>
+            Predictrix is a comprehensive user behavior analysis tool designed to simulate, analyze, and predict user interactions in real-time. The key features of Predictrix include:
+        </p>
+        <ul>
+            <li><strong>Real-time Data Simulation:</strong> Generate random logs simulating user actions such as "Add to Cart", "Login", and "Page View".</li>
+            <li><strong>Splunk Integration:</strong> Data is ingested into Splunk via the HTTP Event Collector (HEC) for real-time analysis.</li>
+            <li><strong>Predictive Analytics:</strong> Leverage Splunk MLTK to predict user behaviors like purchase likelihood based on interaction patterns.</li>
+            <li><strong>Real-time Alerts:</strong> Alerts for key events like abandoned carts or spikes in error logs to ensure timely responses.</li>
+        </ul>
+    </section>
+
+    <!-- Data Generation Section -->
+    <section id="data-generation">
+        <h2>1. Python Script to Simulate User Interaction Data</h2>
+        <p>The Predictrix project starts by simulating user interaction logs using a Python script. The script creates random logs to mimic typical user actions like adding items to the cart, logging in, viewing pages, and more.</p>
+        <h3>How Data Gets Into Splunk - Detailed Flow</h3>
+        <ul>
+            <li><strong>Data Generation (via Python script):</strong> The Python script simulates user interaction logs (such as Add to Cart, Page View, Login, etc.)
+                 with various attributes like user_id, device, location, page, and timestamp. These logs are structured as JSON events,
+                  which is a common format for sending structured data to Splunk.</li>
+                 <br>
+            <li><strong>Sending Data to Splunk (via HTTP Event Collector):</strong> The logs are sent to Splunk using the HTTP Event Collector (HEC).
+                 The HEC endpoint URL (https://127.0.0.1:8088/services/collector) is specified in the Python script. 
+                 <br>
+                 Each log event is wrapped in a JSON payload and sent using a POST request.
+                  The HEC request includes headers such as the Authorization token,
+                   ensuring only authorized sources can send data to Splunk.</li>
+                   <br>
+            <li><strong>Event Data Format:</strong> The log event being sent follows this format:
+                <pre class="json-border"><code>{
+    "event": {
+        "user_id": 123,
+        "event": "Add to Cart",
+        "device": "Desktop",
+        "location": "USA",
+        "page": "Product",
+        "timestamp": 1609459200
+    }
+}</code></pre>
+            </li>
+            <li><strong>Splunk HEC Receives and Indexes Data:</strong> Upon receiving the log through HEC, Splunk parses the incoming data.
+                 The event is then indexed under the predictrix index (search query index=predictrix). 
+                 The event gets associated with default fields like timestamp, host, source, and sourcetype.</li> <br>
+            <li><strong>Splunk Data Structure:</strong> Once the event data is in Splunk, We can perform various operations on it. For example:
+                <pre class="splunk-border"><code>index=predictrix | stats count by user_id</code></pre>
+            </li>
+        </ul>
+        <h3>Python Script Code</h3>
+        <pre class="code-border"><code class="language-python">
+# Python code example
+import random
+import json
+import requests
+
+def generate_user_interaction():
+    actions = ["Add to Cart", "Login", "Page View"]
+    user_interaction = {
+        "user_id": random.randint(1, 1000),
+        "event": random.choice(actions),
+        "device": random.choice(["Desktop", "Mobile", "Tablet"]),
+        "location": random.choice(["USA", "Canada", "UK"]),
+        "page": random.choice(["Home", "Product", "Checkout"]),
+        "timestamp": random.randint(1609459200, 1640995200)
+    }
+    return json.dumps(user_interaction)
+
+def send_to_splunk(data):
+    url = "https://127.0.0.1:8088/services/collector"
+    headers = {"Authorization": "Splunk YOUR_SPLUNK_HEC_TOKEN"}
+    response = requests.post(url, headers=headers, data=data)
+    return response.status_code
+
+if __name__ == "__main__":
+    for _ in range(10):
+        log = generate_user_interaction()
+        status = send_to_splunk(log)
+        print(f"Sent log with status code: {status}")
+</code></pre>
+    </section>
+
+    <!-- Predictive Insights Section -->
+    <section id="predictive-insights">
+        <h2>2. Predictive Insights</h2>
+        <p>Using Splunk MLTK, we predict user behaviors based on interaction history.</p>
+        <p>The Predictrix platform leverages Splunk's Machine Learning Toolkit (MLTK) to create a predictive model that 
+            forecasts user purchase completion based on their interactions and behaviors. The following details highlight the model setup,
+             data processing, and key configurations:</p>
+        <ul>
+            <li><strong>Data Preparation:</strong> The dataset used for this model originates from the index=predictrix.
+                 A crucial transformation is applied to label the target field purchase_completed, where: <br>
+                <ul>
+                    <li>A value of 1 indicates a purchase was completed (when page="Checkout").</li>
+                    <li>A value of 0 indicates no purchase.</li>  <br>
+                </ul>
+            </li>
+            <li>The Splunk query for data preparation:
+                <pre class="splunk-border"><code>index=predictrix | eval purchase_completed=if(page=="Checkout",1,0) 
+                 | table device, event, location, page, purchase_completed</code></pre>
+            </li>
+            <li>This query ensures the dataset includes relevant fields for analysis and prediction:
+                <ul>
+                    <li>Features: device, event, location, page</li>
+                    <li>Target Field: purchase_completed</li>  <br>
+                </ul>
+            </li>
+            <li><strong>Model Details:</strong></li>
+            <ul>
+                <li>Model Type: Experiment: Smart Prediction, Algorithm: AutoPrediction</li>
+                <li>Splunk's AutoPrediction automates the selection of a suitable machine learning algorithm, enabling seamless experimentation.</li>
+                <li>Field to Predict: purchase_completed (binary classification: 1 for purchase, 0 for no purchase)</li>
+                <li>Fields Used for Prediction: device, event, location, page</li>  <br>
+                <li>Experiment Settings:
+                    <ul>
+                        <li>Test Split Ratio: 0.3 (30% of the data is reserved for testing, and 70% is used for training).</li>
+                        <li>Auto-selected hyperparameters: max_features, criterion, n_estimators, max_depth, min_samples_split, max_leaf_nodes.</li>  <br>
+                    </ul>
+                </li>
+            </ul>
+            <li><strong>Model Performance:</strong> The model is designed to identify patterns in user interaction data, enabling real-time predictions
+                 about the likelihood of purchase completion. By analyzing historical data, the model helps the Predictrix platform:
+                <ul>
+                    <li>Enhance user experience by targeting users likely to abandon purchases.</li>
+                    <li>Trigger alerts for potential abandoned carts.</li>
+                    <li>Provide actionable insights to improve conversion rates.</li>
+                </ul>
+            </li>
+        </ul>
+        <img src="/images/mlkt.png" alt="Purchase Likelihood Pie Chart" class="Purchase-Likelihood-Prediction">
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard">
+        <h2>3. Splunk Dashboards</h2>
+        <p>Interactive dashboards visualize user engagement, login activity, and more.</p>
+        
+        <li>Counts the number of events grouped by the location field in the predictrix index.
+            <pre class="splunk-border"><code>index=predictrix | stats count by location</code></pre>
+        </li>
+        <img src="/images/geosearch.png" alt="Dashboard Example 1" class="dashboard-image">
+        <br><br>
+        <li>Counts the number of events grouped by the page field and sorts
+             the results in descending order of the count.
+            <pre class="splunk-border"><code>index=predictrix | stats count by page | sort - count</code></pre>
+        </li>
+        <img src="/images/popular.png" alt="Dashboard Example 2" class="dashboard-image">
+        <br><br>
+        <li>Applies a machine learning model (purchase_prediction_mode), evaluates whether a user is likely to purchase or not, and counts events by prediction categories (Likely to Purchase or Not Likely to Purchase).
+            <pre class="splunk-border"><code>index=predictrix | apply purchase_prediction_mode 
+                 | eval predicted_purchase=if('predicted(purchase)' == 1.0, "Likely to Purchase", 
+        "Not Likely to Purchase")
+                 | stats count by predicted_purchase
+            </code></pre>
+        </li>
+        <img src="/images/predictor.png" alt="Dashboard Example 2" class="dashboard-image">
+        <br><br>
+        <li>Creates a time chart with a 1-hour span, displaying the count of events grouped by the event field over time.
+            <pre class="splunk-border"><code>index=predictrix | timechart span=1h count by event</code></pre>
+        </li>
+        <img src="/images/search.png" alt="Dashboard Example 2" class="dashboard-image">
+        
+    </section>
+
+    <!-- Alerts Section -->
+    <section id="alerts">
+        <h2>4. Real-Time Alerts</h2>
+        <p>Set up this alert in Splunk to track interactions on the "Checkout" page
+
+           <li>Condition: The alert will trigger whenever there is at least one event where a user interacts with the "Checkout" page.</li> 
+            <br>
+           <li>Search Query: The query looks for events in the predictrix index where the page is identified as "Checkout." 
+            It then extracts details like the device used, the type of event, the user's location, the page, the timestamp, and the user ID.</li> 
+            <br>
+
+            <li>Action: When the alert is triggered, it adds the alert to the "Triggered Alerts" list and sends a notification via a webhook. </li> </p>
+
+                <pre class="splunk-border"><code>index=predictrix | search page="Checkout"
+                 | table device, event, location, page, timestamp, user_id</code></pre>
+
+            <p>This alert helps monitor user interactions on the checkout page, and the data can be used for tracking behavior, troubleshooting, or analytics purposes.</p>
+            
+
+    </section>
+
+  <!-- Contact Section -->
+<section id="contact">
+    <h2>Contact Me</h2>
+    <ul>
+        <li>
+            <a href="https://www.linkedin.com/in/pratik-gupta-a59153171/" target="_blank">
+                <img src="/images/linkedin-logo.png" alt="LinkedIn Logo"> LinkedIn
+            </a>
+        </li>
+        <li>
+            <a href="resume.pdf" target="_blank">
+                <img src="/images/resume.png" alt="Resume Logo"> Resume
+            </a>
+        </li>
+        <li>
+            <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=GTvVlcSDbSJZtmDDrXFqDLPTcXPPfMJCppQXRJZjTSMXJbrwgqnbDHsShcvbzdZKpnrlwSjLjBftC" target="_blank">
+                <img src="/images/gmail.png" alt="Gmail Logo"> Gmail
+            </a>
+        </li>
+    </ul>
+</section>
+
+<footer>
+    <p>© 2025 Predictrix. All rights reserved.</p>
+</footer>
+</body>
+
+</html>
